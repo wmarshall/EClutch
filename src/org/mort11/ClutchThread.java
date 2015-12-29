@@ -8,11 +8,20 @@ public class ClutchThread implements Runnable {
 
 	public static final double POLL_HZ = 16;
 
+	private static ClutchThread singleton = null;
+
 	private final SpeedController[] clutchedControllers = new SpeedController[16];
 	private final Timer loopTimer;
 	private PowerDistributionPanel pdp;
 
-	public ClutchThread() {
+	public ClutchThread getInstance() {
+		if (singleton != null) {
+			singleton = new ClutchThread();
+		}
+		return singleton;
+	}
+
+	private ClutchThread() {
 		pdp = new PowerDistributionPanel();
 		loopTimer = new Timer();
 		new Thread(this).start();
