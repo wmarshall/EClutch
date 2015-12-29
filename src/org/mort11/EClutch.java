@@ -6,6 +6,7 @@ public class EClutch implements SpeedController {
 	private SpeedController wrappedController;
 	private boolean stallFlag = false;
 	private TemperatureIntegral tempIntegral = new TemperatureIntegral();
+	private double stallTemperature = 40;
 
 	private double setpoint;
 
@@ -54,5 +55,9 @@ public class EClutch implements SpeedController {
 
 	public void setStalled(boolean stallFlag) {
 		this.stallFlag = stallFlag;
+	}
+
+	public double getStallTemperature() {
+		return this.stallTemperature;
 	}
 }
