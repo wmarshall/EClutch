@@ -2,27 +2,33 @@ package org.mort11;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class ClutchThread implements Runnable {
 
 	public static final double POLL_HZ = 16;
 
 	private final SpeedController[] clutchedControllers = new SpeedController[16];
+	private final Timer loopTimer;
 	private PowerDistributionPanel pdp;
 
 	public ClutchThread() {
 		pdp = new PowerDistributionPanel();
+		loopTimer = new Timer();
 		new Thread(this).start();
 	}
 
 	@Override
 	public void run() {
+		loopTimer.start();
 		while (true) {
 			double motorVoltage = pdp.getVoltage();
 			for (int i = 0; i < clutchedControllers.length; i++) {
 				if (clutchedControllers[i] != null) {
 					double motorCurrent = pdp.getCurrent(i);
 					// Update Temperature integral
+					TemperatureIntegral temp = new TemperatureIntegral();
+					temp.update(motorVoltage, motorCurrent, loopTimer.get());
 					// Check for new Stall
 					boolean stalled = false;
 					boolean wasStalled = false;
