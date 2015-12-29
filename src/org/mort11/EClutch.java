@@ -51,4 +51,8 @@ public class EClutch implements SpeedController {
 	public TemperatureIntegral getTempIntegral() {
 		return this.tempIntegral;
 	}
+
+	public void setStalled(boolean stallFlag) {
+		this.stallFlag = stallFlag;
+	}
 }
