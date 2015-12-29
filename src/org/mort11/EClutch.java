@@ -3,18 +3,15 @@ package org.mort11;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class EClutch implements SpeedController {
-    private int PDPChannel;
     private SpeedController wrappedController;
     private boolean stallFlag = false;
-    private TemperatureIntegral tempIntegral;
-
-    private ClutchThread thread = new ClutchThread();
+    private TemperatureIntegral tempIntegral = new TemperatureIntegral();
 
     private double setpoint;
 
-    public EClutch(int PDPChannel, SpeedController wrappedController) {
-        this.PDPChannel = PDPChannel;
+    public EClutch(int PDPChannel, SpeedController wrappedController) throws Exception {
         this.wrappedController = wrappedController;
+        ClutchThread.getInstance().registerMotor(wrappedController, PDPChannel);
     }
 
     @Override
@@ -25,7 +22,11 @@ public class EClutch implements SpeedController {
     @Override
     public void set(double speed, byte syncGroup) {
         this.setpoint = speed;
-
+        if (isStalled()) {
+            wrappedController.set(0);
+        } else {
+            wrappedController.set(setpoint);
+        }
     }
 
     @Override
